@@ -194,7 +194,7 @@ export function PracticeRunner({
           <button
             type="button"
             onClick={begin}
-            className="rounded-full bg-accent px-8 py-3 text-base font-medium text-white transition-opacity hover:opacity-90"
+            className="rounded-full bg-accent-strong px-8 py-3 text-base font-medium text-white transition-opacity hover:opacity-90"
           >
             Begin ({Math.round(practice.durationSeconds / 60) || 1} min)
           </button>

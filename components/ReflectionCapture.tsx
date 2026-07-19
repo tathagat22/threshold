@@ -129,7 +129,7 @@ export function ReflectionCapture({ practiceSlug }: { practiceSlug: string }) {
         type="button"
         onClick={submit}
         disabled={!text.trim() || status === "submitting"}
-        className="self-start rounded-full bg-accent px-6 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="self-start rounded-full bg-accent-strong px-6 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {status === "submitting" ? "Saving…" : "Save"}
       </button>

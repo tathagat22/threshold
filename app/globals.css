@@ -5,12 +5,17 @@
   --foreground: #1c1a17;
   --accent: #b5642a;
   --muted: #7a746a;
+  /* Fixed (not theme-swapped) — solid button fills need this regardless of light/dark,
+     since --accent alone (#d98a4b in dark mode) only contrasts white text at 2.73:1,
+     short of the 4.5:1 WCAG AA minimum. Verified at 5.91:1 against white. */
+  --accent-strong: #9c4f1e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
   --color-muted: var(--muted);
   --font-display: var(--font-display);
   --font-body: var(--font-body);

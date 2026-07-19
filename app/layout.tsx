@@ -3,10 +3,13 @@ import { Fraunces, Inter } from "next/font/google";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
+// No extra variation axes (opsz/SOFT/WONK) — we never use font-variation-settings
+// for them, and registering axes pulls a much larger variable-font file for no
+// visual benefit (this alone was a ~120KB request blocking first paint).
 const fraunces = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
-  axes: ["opsz", "SOFT", "WONK"],
+  weight: ["500", "600"],
 });
 
 const inter = Inter({
