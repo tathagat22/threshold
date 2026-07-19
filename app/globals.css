@@ -36,3 +36,46 @@ h2,
 h3 {
   font-family: var(--font-display), ui-serif, Georgia, serif;
 }
+
+@keyframes step-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-reveal {
+  animation: step-reveal 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-reveal {
+    animation: none;
+  }
+}
+
+@keyframes idle-breathe {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+}
+
+.idle-breathe {
+  animation: idle-breathe 5600ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .idle-breathe {
+    animation: none;
+  }
+}
