@@ -6,6 +6,9 @@ Theravāda, Stoicism, Focusing, Krishnamurti's choiceless awareness, and
 Gestalt therapy — not more explanation of what they mean. Secular by design:
 no devotional or deity-address practices.
 
+**Live:** [threshold-gray.vercel.app](https://threshold-gray.vercel.app)
+(placeholder domain — see Open Items below for a real one).
+
 ## Development
 
 ```bash
@@ -40,3 +43,14 @@ inserted with `approved = false`, and Row Level Security only allows reading
 (`reflections` table) and flip `approved` to `true` for anything worth
 showing. There's no admin UI for this in v1 — the Supabase dashboard already
 does the job.
+
+## Open items
+
+- **Final name/branding** — "Threshold" is a working name, not decided.
+- **Real domain** — currently live on the Vercel-assigned URL. Once a domain
+  is bought, point it at this Vercel project and update `NEXT_PUBLIC_SITE_URL`
+  (both in Vercel's project env vars and `.env.example`).
+- **Search Console** — verify the domain and submit `/sitemap.xml` once a
+  real domain is live (Vercel URLs can be verified too, but re-verification
+  will be needed after a domain switch anyway).
+- **Reflections backend** — Supabase project not yet created; see above.
