@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { startAmbient, stopAmbient } from "@/lib/audio";
 import type { Practice } from "@/lib/types";
+import { isSpeechSupported, speak, stopSpeaking } from "@/lib/voice";
 
 type Phase = "intro" | "running" | "done";
+
+const VOICE_STORAGE_KEY = "threshold:voice-enabled";
+const AMBIENT_STORAGE_KEY = "threshold:ambient-enabled";
 
 // Fixed breathing cadence (~10.7 breaths/min, a relaxed resting pace) — deliberately
 // decoupled from step.durationSeconds. Steps run 20-75s in data/practices.ts; if the
@@ -11,16 +16,29 @@ type Phase = "intro" | "running" | "done";
 // single breath that took 70 seconds to complete, reading as a slow zoom, not a breath.
 const BREATH_PERIOD_MS = 5600;
 
-export function PracticeRunner({ practice }: { practice: Practice }) {
+export function PracticeRunner({
+  practice,
+  onComplete,
+}: {
+  practice: Practice;
+  onComplete?: () => void;
+}) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [stepIndex, setStepIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [ambientEnabled, setAmbientEnabled] = useState(true);
+  const [voiceSupported, setVoiceSupported] = useState(false);
 
   const pulseRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const secondsRef = useRef<HTMLSpanElement>(null);
   const stepElapsedMsRef = useRef(0);
   const lastFrameTsRef = useRef<number | null>(null);
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -29,6 +47,35 @@ export function PracticeRunner({ practice }: { practice: Practice }) {
     const onChange = () => setReducedMotion(query.matches);
     query.addEventListener("change", onChange);
     return () => query.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time feature detection
+    setVoiceSupported(isSpeechSupported());
+
+    const storedVoice = localStorage.getItem(VOICE_STORAGE_KEY);
+    const storedAmbient = localStorage.getItem(AMBIENT_STORAGE_KEY);
+    if (storedVoice !== null) setVoiceEnabled(storedVoice === "1");
+    if (storedAmbient !== null) setAmbientEnabled(storedAmbient === "1");
+  }, []);
+
+  // Speak the current instruction aloud whenever it changes, so voice guidance stays
+  // in sync with the on-screen text without duplicating the step-advance logic above.
+  useEffect(() => {
+    if (phase === "running" && voiceEnabled) {
+      speak(practice.steps[stepIndex].instruction);
+    }
+    if (phase !== "running") {
+      stopSpeaking();
+      stopAmbient();
+    }
+  }, [phase, stepIndex, voiceEnabled, practice.steps]);
+
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+      stopAmbient();
+    };
   }, []);
 
   useEffect(() => {
@@ -81,6 +128,7 @@ export function PracticeRunner({ practice }: { practice: Practice }) {
           setStepIndex((i) => i + 1);
         } else {
           setPhase("done");
+          onCompleteRef.current?.();
         }
         return;
       }
@@ -100,6 +148,9 @@ export function PracticeRunner({ practice }: { practice: Practice }) {
     lastFrameTsRef.current = null;
     setStepIndex(0);
     setPhase("running");
+    // Started from this click handler (a user gesture), not an effect, so the
+    // AudioContext it creates is reliably allowed to play by browser autoplay policy.
+    if (ambientEnabled) startAmbient();
   }
 
   function restart() {
@@ -107,6 +158,22 @@ export function PracticeRunner({ practice }: { practice: Practice }) {
     lastFrameTsRef.current = null;
     setStepIndex(0);
     setPhase("intro");
+  }
+
+  function toggleVoice() {
+    setVoiceEnabled((prev) => {
+      const next = !prev;
+      localStorage.setItem(VOICE_STORAGE_KEY, next ? "1" : "0");
+      return next;
+    });
+  }
+
+  function toggleAmbient() {
+    setAmbientEnabled((prev) => {
+      const next = !prev;
+      localStorage.setItem(AMBIENT_STORAGE_KEY, next ? "1" : "0");
+      return next;
+    });
   }
 
   const currentStep = practice.steps[stepIndex];
@@ -131,6 +198,16 @@ export function PracticeRunner({ practice }: { practice: Practice }) {
           >
             Begin ({Math.round(practice.durationSeconds / 60) || 1} min)
           </button>
+          <div className="flex items-center gap-4 text-xs text-muted">
+            {voiceSupported && (
+              <button type="button" onClick={toggleVoice} className="underline decoration-dotted underline-offset-4">
+                Spoken guidance: {voiceEnabled ? "on" : "off"}
+              </button>
+            )}
+            <button type="button" onClick={toggleAmbient} className="underline decoration-dotted underline-offset-4">
+              Ambient tone: {ambientEnabled ? "on" : "off"}
+            </button>
+          </div>
         </div>
       )}
 

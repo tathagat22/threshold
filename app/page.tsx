@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PracticeRunner } from "@/components/PracticeRunner";
+import { PracticePlayer } from "@/components/PracticePlayer";
 import { getPracticeBySlug } from "@/lib/practices";
 import { SITE_NAME } from "@/lib/site";
 import { notFound } from "next/navigation";
@@ -18,7 +18,7 @@ export default function Home() {
         <p className="text-sm text-muted">{practice.source.tradition}</p>
       </div>
 
-      <PracticeRunner practice={practice} />
+      <PracticePlayer practice={practice} />
 
       <Link
         href={`/practice/${practice.slug}`}

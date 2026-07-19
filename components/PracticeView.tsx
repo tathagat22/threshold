@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { PracticeRunner } from "@/components/PracticeRunner";
+import { PracticePlayer } from "@/components/PracticePlayer";
+import { Reflections } from "@/components/Reflections";
 import { getPracticeBySlug } from "@/lib/practices";
 import { practiceHowToSchema } from "@/lib/schema";
 import type { Practice } from "@/lib/types";
@@ -19,7 +20,9 @@ export function PracticeView({ practice }: { practice: Practice }) {
         <h1 className="text-4xl font-medium tracking-tight sm:text-5xl">{practice.title}</h1>
       </header>
 
-      <PracticeRunner practice={practice} />
+      <PracticePlayer practice={practice} />
+
+      <Reflections practiceSlug={practice.slug} />
 
       <details className="rounded-lg border border-foreground/10 p-4">
         <summary className="cursor-pointer text-sm font-medium">Read the practice</summary>

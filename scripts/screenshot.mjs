@@ -16,5 +16,5 @@ await page.screenshot({ path: "/tmp/threshold-running.png" });
 await page.goto("http://localhost:3000/practices", { waitUntil: "networkidle" });
 await page.screenshot({ path: "/tmp/threshold-library.png" });
 
-await browser.close();
 console.log("done");
+await browser.close();
