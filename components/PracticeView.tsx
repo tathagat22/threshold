@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PracticeRunner } from "@/components/PracticeRunner";
 import { getPracticeBySlug } from "@/lib/practices";
+import { practiceHowToSchema } from "@/lib/schema";
 import type { Practice } from "@/lib/types";
 
 export function PracticeView({ practice }: { practice: Practice }) {
@@ -8,8 +9,11 @@ export function PracticeView({ practice }: { practice: Practice }) {
     .map((slug) => getPracticeBySlug(slug))
     .filter((p): p is Practice => Boolean(p));
 
+  const schemaJson = JSON.stringify(practiceHowToSchema(practice)).replace(/</g, "\\u003c");
+
   return (
     <article className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-6 py-16">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schemaJson }} />
       <header className="flex flex-col items-center gap-3 text-center">
         <p className="text-sm uppercase tracking-wide text-muted">{practice.source.tradition}</p>
         <h1 className="text-4xl font-medium tracking-tight sm:text-5xl">{practice.title}</h1>

@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPractices } from "@/lib/practices";
 
+const TITLE = "All practices";
+const DESCRIPTION =
+  "Short, guided direct-experience practices from contemplative traditions around the world.";
+
 export const metadata: Metadata = {
-  title: "All practices",
-  description: "Short, guided direct-experience practices from contemplative traditions around the world.",
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: "/practices" },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: "/practices", type: "website" },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 };
 
 export default function PracticesPage() {

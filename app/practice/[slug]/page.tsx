@@ -16,9 +16,23 @@ export async function generateMetadata({
   const practice = getPracticeBySlug(slug);
   if (!practice) return {};
 
+  const url = `/practice/${practice.slug}`;
+
   return {
     title: practice.title,
     description: practice.promise,
+    alternates: { canonical: url },
+    openGraph: {
+      title: practice.title,
+      description: practice.promise,
+      url,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: practice.title,
+      description: practice.promise,
+    },
   };
 }
 
